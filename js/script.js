@@ -150,6 +150,25 @@ function formatNetworkMetric(metricType, value, decimals = 1) {
 
     return formatMetric(value, unit, decimals);
 }
+/**
+ * Mark the Start Test button as busy without using the `disabled`
+ * attribute. A disabled button loses keyboard focus, which drops a
+ * keyboard user back to the top of the page. Repeat clicks are already
+ * ignored by the `testInProgress` check in startNetworkTest().
+ */
+function setStartButtonBusy(button, busy) {
+    if (!button) return;
+
+    button.setAttribute?.("aria-disabled", String(busy));
+    button.setAttribute?.("aria-busy", String(busy));
+
+    const label = $("startTestLabel");
+
+    if (label) {
+        label.textContent = busy ? "Testing..." : "Start Test";
+    }
+}
+
 function setProgress(id, value) {
     const element = $(id);
 
@@ -646,7 +665,7 @@ function initializeMap() {
 
         setText(
             "locationResult",
-            "Leaflet did not load. Check the Leaflet CDN scripts."
+            "The map could not load. Check your internet connection and refresh the page."
         );
 
         return;
@@ -700,7 +719,7 @@ function initializeMap() {
 
         setText(
             "locationResult",
-            "Unable to initialize the map."
+            "The map could not be started. Refresh the page to try again."
         );
     }
 }
@@ -1010,7 +1029,7 @@ function initializeChart() {
 
         setText(
             "testMessage",
-            "Chart.js could not load. Check the Chart.js CDN."
+            "The history chart could not load. Check your internet connection and refresh the page."
         );
 
         return;
@@ -1534,6 +1553,45 @@ function updateHistoryChart(history = sessionTests, range = null) {
         filtered.map((item) => item.download_mbps);
 
     networkChart.update();
+
+    updateChartDescription(filtered);
+}
+
+/**
+ * Keep the canvas aria-label in step with the plotted data, because
+ * screen readers cannot read the pixels Chart.js draws.
+ */
+function updateChartDescription(items) {
+    const canvas = $("networkChart");
+
+    if (!canvas?.setAttribute) return;
+
+    if (!items.length) {
+        canvas.setAttribute(
+            "aria-label",
+            "Network history chart. No network history is available for the selected range."
+        );
+        return;
+    }
+
+    const latest = items[items.length - 1];
+    const parts = [
+        `Network history chart showing ${items.length} test${items.length === 1 ? "" : "s"}.`
+    ];
+
+    if (isValidMetric(latest.connectivity_score)) {
+        parts.push(
+            `Latest connectivity score: ${Math.round(Number(latest.connectivity_score))} out of 100.`
+        );
+    }
+
+    if (isValidMetric(latest.download_mbps)) {
+        parts.push(
+            `Latest download speed: ${Number(latest.download_mbps).toFixed(1)} Mbps.`
+        );
+    }
+
+    canvas.setAttribute("aria-label", parts.join(" "));
 }
 
 /* =========================================================
@@ -1577,10 +1635,7 @@ async function startNetworkTest() {
 
     const button = $("startTest");
 
-    if (button) {
-        button.disabled = true;
-        button.textContent = "Testing...";
-    }
+    setStartButtonBusy(button, true);
 
     setText(
         "testMessage",
@@ -1683,7 +1738,7 @@ async function startNetworkTest() {
 
         setText(
             "testMessage",
-            "Network test failed. Check your backend and browser console."
+            "Network test failed. Check that the backend server is running and you are connected to the internet, then try again."
         );
 
         showToast("Network test failed.");
@@ -1691,10 +1746,7 @@ async function startNetworkTest() {
     } finally {
         testInProgress = false;
 
-        if (button) {
-            button.disabled = false;
-            button.textContent = "Start Test";
-        }
+        setStartButtonBusy(button, false);
 
         if (isDeviceOffline()) {
             clearLiveMetrics();
@@ -2261,6 +2313,20 @@ function updateReadinessDisplay(textId, barId, value) {
     );
 
     setProgress(barId, value === null ? 0 : value);
+
+    // The bar's parent track carries role="progressbar".
+    const track = $(barId)?.parentElement;
+
+    if (track?.setAttribute) {
+        track.setAttribute(
+            "aria-valuenow",
+            String(value === null ? 0 : value)
+        );
+        track.setAttribute(
+            "aria-valuetext",
+            value === null ? "Not available" : `${value}%`
+        );
+    }
 }
 
 /* =========================================================

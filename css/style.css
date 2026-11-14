@@ -25,6 +25,12 @@
     --accent-pink: #ec4899;
 
     --card-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+
+    /* Accessibility tokens.
+       --border-control: at least 3:1 against the glass cards (WCAG 1.4.11).
+       --focus-ring: at least 3:1 against every background on the page. */
+    --border-control: #7c3aed;
+    --focus-ring: #4c1d95;
 }
 
 *,
@@ -175,10 +181,12 @@ body {
    ========================================================= */
 
 #startTest {
+    /* Darker gradient stops keep white text at 4.6:1 or more
+       (the previous #ec4899 end was 3.5:1). */
     background: linear-gradient(
         135deg,
-        #8b5cf6 0%,
-        #ec4899 100%
+        #7c3aed 0%,
+        #db2777 100%
     ) !important;
 
     color: #fff !important;
@@ -208,7 +216,8 @@ body {
     box-shadow: 0 8px 22px rgba(139, 92, 246, .4);
 }
 
-#startTest:disabled {
+#startTest:disabled,
+#startTest[aria-disabled="true"] {
     opacity: .7 !important;
     cursor: not-allowed;
     transform: none;
@@ -250,7 +259,8 @@ body {
     border-color: var(--accent-purple);
 }
 
-.control-btn:disabled {
+.control-btn:disabled,
+.control-btn[aria-disabled="true"] {
     opacity: .6;
     cursor: not-allowed;
 }
@@ -483,7 +493,7 @@ body {
 .status-label.online,
 .status-label.excellent,
 .status-label.good {
-    color: #15803d;
+    color: #166534;
 }
 
 .status-label.disconnected,
@@ -494,7 +504,7 @@ body {
 
 .status-label.testing,
 .status-label.fair {
-    color: #b45309;
+    color: #92400e;
 }
 
 /* =========================================================
@@ -593,7 +603,7 @@ body {
     width: 100%;
     min-height: 40px;
     padding: 8px 10px;
-    border: 1px solid var(--glass-border);
+    border: 1px solid var(--border-control);
     border-radius: 0.75rem;
     background: rgba(255, 255, 255, 0.8);
     color: var(--text-primary);
@@ -603,7 +613,7 @@ body {
 }
 
 .history-filter-group input:focus-visible {
-    outline: 2px solid var(--accent-purple);
+    outline: 3px solid var(--focus-ring);
     outline-offset: 2px;
 }
 
@@ -670,3 +680,70 @@ body {
     color: #b91c1c;
 }
 .history-error-state[hidden] { display: none !important; }
+
+
+/* =========================================================
+   ACCESSIBILITY
+   ========================================================= */
+
+/* Skip link: hidden until it receives keyboard focus. */
+.skip-link {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    z-index: 2000;
+    padding: 0.6rem 1rem;
+    border-radius: 0.75rem;
+    background: var(--text-primary);
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+    transform: translateY(-200%);
+}
+
+.skip-link:focus {
+    transform: translateY(0);
+}
+
+/* Shared, clearly visible keyboard focus indicator. */
+a:focus-visible,
+button:focus-visible,
+select:focus-visible,
+input:focus-visible,
+summary:focus-visible,
+[tabindex]:not([tabindex="-1"]):focus-visible {
+    outline: 3px solid var(--focus-ring);
+    outline-offset: 2px;
+}
+
+/* The map sits inside an overflow:hidden frame, so draw its ring inside. */
+#connectivityMap:focus-visible,
+.leaflet-container:focus-visible {
+    outline: 3px solid var(--focus-ring);
+    outline-offset: -3px;
+}
+
+/* The skip-link target is focused by script only; no ring needed. */
+#main-content:focus {
+    outline: none;
+}
+
+/* The history range select needs a visible boundary (WCAG 1.4.11). */
+select.control-btn {
+    border-color: var(--border-control);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}

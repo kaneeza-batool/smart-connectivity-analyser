@@ -199,7 +199,8 @@
       transform: translateY(-1px);
     }
 
-    .control-btn:disabled {
+    .control-btn:disabled,
+    .control-btn[aria-disabled="true"] {
       cursor: not-allowed;
       opacity: .6;
       transform: none;
@@ -240,7 +241,7 @@
     .status-label.online,
     .status-label.excellent,
     .status-label.good {
-      color: #15803d;
+      color: #166534;
     }
 
     .status-label.disconnected,
@@ -251,7 +252,7 @@
 
     .status-label.testing,
     .status-label.fair {
-      color: #b45309;
+      color: #92400e;
     }
 
     #toast.show {
@@ -325,14 +326,16 @@
 
 <body class="font-sans antialiased">
 
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
 <main class="dashboard-container" id="dashboard">
 
   <!-- HEADER -->
   <header class="dashboard-header glass-card p-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
 
     <div class="flex items-center gap-3">
-      <div class="w-11 h-11 rounded-xl accent-gradient flex items-center justify-center text-white shadow-md">
-        <i class="fa-solid fa-network-wired text-lg"></i>
+      <div class="w-11 h-11 rounded-xl accent-gradient flex items-center justify-center text-white shadow-md" aria-hidden="true">
+        <i class="fa-solid fa-network-wired text-lg" aria-hidden="true"></i>
       </div>
 
       <div>
@@ -346,41 +349,41 @@
     </div>
 
     <nav aria-label="Dashboard navigation" class="flex flex-wrap items-center justify-center gap-1">
-      <a href="#dashboard" class="px-3 py-2 text-xs font-semibold rounded-lg bg-violet-100 text-violet-800">Dashboard</a>
+      <a href="#dashboard" class="px-3 py-2 text-xs font-semibold rounded-lg bg-violet-100 text-violet-800" aria-current="page">Dashboard</a>
       <a href="#history" class="px-3 py-2 text-xs font-semibold rounded-lg text-slate-600 hover:bg-white/60">History</a>
       <a href="#applications" class="px-3 py-2 text-xs font-semibold rounded-lg text-slate-600 hover:bg-white/60">Applications</a>
       <a href="#location" class="px-3 py-2 text-xs font-semibold rounded-lg text-slate-600 hover:bg-white/60">Location</a>
     </nav>
 
-    <button id="startTest" type="button" class="control-btn accent-gradient !text-white !border-transparent px-5 py-3">
-      <i class="fa-solid fa-bolt"></i>
-      <span>Start Test</span>
+    <button id="startTest" type="button" class="control-btn accent-gradient !text-white !border-transparent px-5 py-3" aria-describedby="testMessage">
+      <i class="fa-solid fa-bolt" aria-hidden="true"></i>
+      <span id="startTestLabel">Start Test</span>
     </button>
 
   </header>
 
   <!-- CONNECTIVITY SCORE -->
-  <section class="score-card glass-card p-5 md:p-6 space-y-4" aria-labelledby="scoreHeading">
+  <section id="main-content" tabindex="-1" class="score-card glass-card p-5 md:p-6 space-y-4" aria-labelledby="scoreHeading">
 
     <div class="flex items-center justify-between gap-3">
       <h2 id="scoreHeading" class="font-bold text-slate-800">Connectivity Score</h2>
 
       <div class="flex items-center gap-2 text-xs font-semibold text-slate-600">
-        <span id="networkStatusDot" class="status-dot"></span>
+        <span id="networkStatusDot" class="status-dot" aria-hidden="true"></span>
         <span id="status" class="status-label" aria-live="polite">Not Connected</span>
       </div>
     </div>
 
     <div class="flex items-end gap-2">
       <span id="score" class="score-number">0</span>
-      <span class="text-slate-500 font-semibold pb-1">/ 100</span>
+      <span class="text-slate-600 font-semibold pb-1">/ 100</span>
     </div>
 
     <div id="scoreMeter" class="score-meter" role="progressbar" aria-label="Connectivity score" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
       <div id="scoreProgress" class="score-meter-fill"></div>
     </div>
 
-    <p id="testMessage" class="text-sm text-slate-600" aria-live="polite">
+    <p id="testMessage" class="text-sm text-slate-600" role="status" aria-live="polite">
       Run a connectivity test to analyse your network.
     </p>
 
@@ -399,45 +402,45 @@
 
     <div>
       <h2 id="metricsHeading" class="text-lg font-bold">Real-Time Network Metrics</h2>
-      <p id="metricsSubtitle" class="text-xs text-slate-500">Live performance measurements</p>
+      <p id="metricsSubtitle" class="text-xs text-slate-600">Live performance measurements</p>
     </div>
 
     <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
 
       <article class="metric-card rounded-xl bg-white/55 p-4">
-        <p class="text-xs font-semibold text-slate-500">DOWNLOAD</p>
+        <p class="text-xs font-semibold text-slate-600">DOWNLOAD</p>
         <p class="metric-value mt-2"><span id="download">—</span></p>
-        <p class="text-xs text-slate-500">Mbps</p>
+        <p class="text-xs text-slate-600">Mbps</p>
       </article>
 
       <article class="metric-card rounded-xl bg-white/55 p-4">
-        <p class="text-xs font-semibold text-slate-500">UPLOAD</p>
+        <p class="text-xs font-semibold text-slate-600">UPLOAD</p>
         <p class="metric-value mt-2"><span id="upload">—</span></p>
-        <p class="text-xs text-slate-500">Mbps</p>
+        <p class="text-xs text-slate-600">Mbps</p>
       </article>
 
       <article class="metric-card rounded-xl bg-white/55 p-4">
-        <p class="text-xs font-semibold text-slate-500">PING</p>
+        <p class="text-xs font-semibold text-slate-600">PING</p>
         <p class="metric-value mt-2"><span id="ping">—</span></p>
-        <p class="text-xs text-slate-500">ms</p>
+        <p class="text-xs text-slate-600">ms</p>
       </article>
 
       <article class="metric-card rounded-xl bg-white/55 p-4">
-        <p class="text-xs font-semibold text-slate-500">JITTER</p>
+        <p class="text-xs font-semibold text-slate-600">JITTER</p>
         <p class="metric-value mt-2"><span id="jitter">—</span></p>
-        <p class="text-xs text-slate-500">ms</p>
+        <p class="text-xs text-slate-600">ms</p>
       </article>
 
       <article class="metric-card rounded-xl bg-white/55 p-4">
-        <p class="text-xs font-semibold text-slate-500">PACKET LOSS</p>
+        <p class="text-xs font-semibold text-slate-600">PACKET LOSS</p>
         <p class="metric-value mt-2"><span id="packetLoss">—</span></p>
-        <p class="text-xs text-slate-500">%</p>
+        <p class="text-xs text-slate-600">%</p>
       </article>
 
       <article class="metric-card rounded-xl bg-white/55 p-4">
-        <p class="text-xs font-semibold text-slate-500">NETWORK TYPE</p>
+        <p class="text-xs font-semibold text-slate-600">NETWORK TYPE</p>
         <p class="metric-value mt-2"><span id="networkType">—</span></p>
-        <p class="text-xs text-slate-500" id="networkTypeDetail">Connection type</p>
+        <p class="text-xs text-slate-600" id="networkTypeDetail">Connection type</p>
       </article>
 
     </div>
@@ -450,7 +453,7 @@
 
       <div>
         <h2 id="historyHeading" class="text-lg font-bold">Network History</h2>
-        <p class="text-xs text-slate-500">Connectivity and speed trends</p>
+        <p class="text-xs text-slate-600">Connectivity and speed trends</p>
       </div>
 
       <div class="flex flex-wrap items-center gap-2">
@@ -465,7 +468,7 @@
         </select>
 
         <button id="exportCSV" type="button" class="control-btn">
-          <i class="fa-solid fa-file-csv text-violet-600"></i>
+          <i class="fa-solid fa-file-csv text-violet-600" aria-hidden="true"></i>
           Export CSV
         </button>
       </div>
@@ -550,7 +553,9 @@
     </div>
 
     <div class="chart-container" id="historyChartContainer">
-      <canvas id="networkChart" role="img" aria-label="Network performance history chart"></canvas>
+      <canvas id="networkChart" role="img" aria-label="Network history chart. No network history is available yet.">
+        Line chart of connectivity score and download speed for saved network tests.
+      </canvas>
     </div>
 
   </section>
@@ -599,11 +604,11 @@
 
       <div>
         <h2 id="mapHeading" class="text-lg font-bold">Interactive Connectivity Map</h2>
-        <p class="text-xs text-slate-500">Detect your location and explore network connectivity</p>
+        <p class="text-xs text-slate-600">Detect your location and explore network connectivity</p>
       </div>
 
       <span class="text-xs font-bold rounded-full bg-violet-100 text-violet-800 px-3 py-2">
-        <i class="fa-solid fa-location-dot mr-1"></i>
+        <i class="fa-solid fa-location-dot mr-1" aria-hidden="true"></i>
         Location services
       </span>
 
@@ -612,31 +617,31 @@
     <div class="flex flex-wrap gap-2">
 
       <button id="detectLocation" type="button" class="control-btn">
-        <i class="fa-solid fa-crosshairs"></i>
+        <i class="fa-solid fa-crosshairs" aria-hidden="true"></i>
         Detect Location
       </button>
 
       <button id="saveLocation" type="button" class="control-btn">
-        <i class="fa-solid fa-bookmark"></i>
+        <i class="fa-solid fa-bookmark" aria-hidden="true"></i>
         Save Point
       </button>
 
       <button id="findBetterArea" type="button" class="control-btn">
-        <i class="fa-solid fa-magnifying-glass-location"></i>
+        <i class="fa-solid fa-magnifying-glass-location" aria-hidden="true"></i>
         Find Better Area
       </button>
 
     </div>
 
-    <p id="locationResult" class="text-xs text-slate-600" aria-live="polite">
+    <p id="locationResult" class="text-xs text-slate-600" role="status" aria-live="polite">
       Your detected location will appear here.
     </p>
 
     <div class="map-frame rounded-2xl border border-white/70 shadow-inner">
-      <div id="connectivityMap" role="application" aria-label="Interactive network connectivity map"></div>
+      <div id="connectivityMap" role="application" aria-label="Interactive network connectivity map. Use the arrow keys to pan and the plus and minus keys to zoom."></div>
     </div>
 
-    <p id="navigationResult" class="text-xs text-slate-600" aria-live="polite"></p>
+    <p id="navigationResult" class="text-xs text-slate-600" role="status" aria-live="polite"></p>
 
   </section>
 
@@ -645,41 +650,41 @@
 
     <div>
       <h2 id="readinessHeading" class="text-lg font-bold">Application Readiness</h2>
-      <p class="text-xs text-slate-500">Estimated suitability for common online activities</p>
+      <p class="text-xs text-slate-600">Estimated suitability for common online activities</p>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 
       <article class="rounded-xl bg-white/50 p-4 space-y-3">
-        <div class="text-2xl">🎮</div>
+        <div class="text-2xl" aria-hidden="true">🎮</div>
         <h3 class="font-bold">Gaming</h3>
-        <p class="text-xs text-slate-500">Latency, jitter and packet loss</p>
+        <p class="text-xs text-slate-600">Latency, jitter and packet loss</p>
         <strong id="gamingScore">0%</strong>
-        <div class="progress-track"><div id="gamingProgress" class="progress-fill"></div></div>
+        <div class="progress-track" role="progressbar" aria-label="Gaming readiness" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="gamingProgress" class="progress-fill"></div></div>
       </article>
 
       <article class="rounded-xl bg-white/50 p-4 space-y-3">
-        <div class="text-2xl">📹</div>
+        <div class="text-2xl" aria-hidden="true">📹</div>
         <h3 class="font-bold">Video Calling</h3>
-        <p class="text-xs text-slate-500">Upload speed and stability</p>
+        <p class="text-xs text-slate-600">Upload speed and stability</p>
         <strong id="videoCallScore">0%</strong>
-        <div class="progress-track"><div id="videoCallProgress" class="progress-fill"></div></div>
+        <div class="progress-track" role="progressbar" aria-label="Video calling readiness" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="videoCallProgress" class="progress-fill"></div></div>
       </article>
 
       <article class="rounded-xl bg-white/50 p-4 space-y-3">
-        <div class="text-2xl">🎬</div>
+        <div class="text-2xl" aria-hidden="true">🎬</div>
         <h3 class="font-bold">Streaming</h3>
-        <p class="text-xs text-slate-500">Download speed and packet loss</p>
+        <p class="text-xs text-slate-600">Download speed and packet loss</p>
         <strong id="streamingScore">0%</strong>
-        <div class="progress-track"><div id="streamingProgress" class="progress-fill"></div></div>
+        <div class="progress-track" role="progressbar" aria-label="Streaming readiness" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="streamingProgress" class="progress-fill"></div></div>
       </article>
 
       <article class="rounded-xl bg-white/50 p-4 space-y-3">
-        <div class="text-2xl">🌐</div>
+        <div class="text-2xl" aria-hidden="true">🌐</div>
         <h3 class="font-bold">Browsing</h3>
-        <p class="text-xs text-slate-500">Speed, latency and packet loss</p>
+        <p class="text-xs text-slate-600">Speed, latency and packet loss</p>
         <strong id="browsingScore">0%</strong>
-        <div class="progress-track"><div id="browsingProgress" class="progress-fill"></div></div>
+        <div class="progress-track" role="progressbar" aria-label="Browsing readiness" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="browsingProgress" class="progress-fill"></div></div>
       </article>
 
     </div>
@@ -689,7 +694,7 @@
   <section class="ai-card glass-card p-5 flex gap-4" aria-labelledby="predictionHeading">
 
     <div class="w-12 h-12 shrink-0 rounded-2xl accent-gradient flex items-center justify-center text-white text-xl">
-      <i class="fa-solid fa-brain"></i>
+      <i class="fa-solid fa-brain" aria-hidden="true"></i>
     </div>
 
     <div>
@@ -705,7 +710,7 @@
   <section class="ai-card glass-card p-5 flex gap-4" aria-labelledby="anomalyHeading">
 
     <div class="w-12 h-12 shrink-0 rounded-2xl bg-cyan-100 flex items-center justify-center text-cyan-700 text-xl">
-      <i class="fa-solid fa-shield-virus"></i>
+      <i class="fa-solid fa-shield-virus" aria-hidden="true"></i>
     </div>
 
     <div>
@@ -721,7 +726,7 @@
   <section class="recommendation-card glass-card p-5" aria-labelledby="recommendationHeading">
 
     <div class="flex items-start gap-4">
-      <div class="text-3xl">💡</div>
+      <div class="text-3xl" aria-hidden="true">💡</div>
 
       <div>
         <h2 id="recommendationHeading" class="font-bold">Network Recommendation</h2>
